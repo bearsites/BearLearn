@@ -1,83 +1,418 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maintenance Mode</title>
-    <!-- Refresh page every 30 seconds -->
-    <meta http-equiv="refresh" content="30">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            background-color: #121212;
-            color: #00ffff; /* Neon blue */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-        }
-
-        .container {
-            padding: 50px;
-            border-radius: 15px;
-            background-color: #1e1e1e;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-        }
-
-        h1 {
-            font-size: 48px;
-            color: #00ffff; /* Neon blue */
-            text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff;
-            margin-bottom: 20px;
-        }
-
-        p {
-            font-size: 20px;
-            text-shadow: 0 0 3px #00ffff, 0 0 6px #00ffff;
-            margin-bottom: 30px;
-        }
-
-        .loader {
-            border: 6px solid #333;
-            border-top: 6px solid #00ffff;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        footer {
-            margin-top: 25px;
-            font-size: 14px;
-            color: #00cccc;
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 36px;
-            }
-
-            p {
-                font-size: 16px;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Maths-Watch — Practice Generator (100 topics × 10 questions)</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#60a5fa;--muted:#94a3b8;--glass: rgba(255,255,255,0.03)}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial}
+    body{background:linear-gradient(180deg,#071226 0%, #081022 50%);color:#e6eef8;padding:20px}
+    .app{max-width:1100px;margin:0 auto}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    .controls{display:flex;gap:8px;margin-left:auto}
+    .btn{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;color:#062226;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    .grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
+    .panel{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 20px rgba(2,6,23,0.6)}
+    .topics{max-height:68vh;overflow:auto;padding-right:6px}
+    .topic{padding:10px;border-radius:8px;margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);cursor:pointer}
+    .topic.active{outline:2px solid rgba(96,165,250,0.18);box-shadow:0 4px 14px rgba(96,165,250,0.06)}
+    .meta{font-size:13px;color:var(--muted)}
+    .question-area{min-height:60vh;display:flex;flex-direction:column}
+    .question-box{background:var(--glass);padding:12px;border-radius:8px;margin-bottom:10px}
+    .qtext{font-size:18px}
+    .answers{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .answer{display:flex;gap:10px;align-items:center}
+    input[type="text"]{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    .footer{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+    .small{font-size:13px;color:var(--muted)}
+    .timer{font-weight:700}
+    .score{background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:10px}
+    .top-actions{display:flex;gap:8px}
+    .help{color:var(--muted);font-size:13px}
+    .search{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit;margin-bottom:8px}
+    .topic-list-legend{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .badge{background:rgba(255,255,255,0.03);padding:4px 8px;border-radius:999px;font-size:12px}
+    footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+    @media(max-width:900px){.grid{grid-template-columns:1fr;}.controls{margin-top:8px}}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>We are making things better!</h1>
-        <p>Our website will be back soon. Thank you for your patience.</p>
-        <div class="loader"></div>
-        <footer>&copy; BearTech.</footer>
+  <div class="app">
+    <header>
+      <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='none'><rect width='24' height='24' rx='5' fill='%2360a5fa'/><path d='M7 12h10M7 7h6M7 17h10' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>" alt="logo" style="border-radius:8px;"/>
+      <div>
+        <h1>Maths‑Watch‑like — Practice Generator</h1>
+        <div class="meta">100 topics × 10 questions each — auto-generated, editable</div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" id="startBtn">Start Test</button>
+        <button class="btn ghost" id="shuffleBtn">Shuffle Questions</button>
+        <button class="btn ghost" id="exportBtn">Download HTML</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <aside class="panel">
+        <div class="topic-list-legend">
+          <strong>Topics</strong>
+          <div class="badge" id="selectionInfo">0 selected</div>
+        </div>
+        <input id="topicSearch" class="search" placeholder="Search topics by name or number..." />
+        <div class="topics" id="topics"></div>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button class="btn ghost" id="selectAll">Select All</button>
+          <button class="btn ghost" id="clearSelection">Clear</button>
+        </div>
+      </aside>
+
+      <main class="panel question-area">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div>
+            <div class="small">Current topic</div>
+            <div id="currentTopicName" style="font-weight:700">Pick a topic on the left</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="small">Timer <span id="timer" class="timer">00:00</span></div>
+            <div class="score small">Score <span id="score">0/0</span></div>
+          </div>
+        </div>
+
+        <div id="questionsContainer">Select a topic to see questions.</div>
+
+        <div class="footer">
+          <div class="help">Tip: you can edit questions or answers inline. Press Submit when done.</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn ghost" id="prevTopic">Prev</button>
+            <button class="btn" id="submitAnswers">Submit</button>
+            <button class="btn ghost" id="nextTopic">Next</button>
+          </div>
+        </div>
+      </main>
     </div>
+
+    <footer>Made for practice — questions are generated using simple templates and randomized numbers. Edit freely.</footer>
+  </div>
+
+  <script>
+    // Configuration
+    const NUM_TOPICS = 100;
+    const Q_PER_TOPIC = 10;
+
+    // A short list of category templates (they will cycle over 100 topics)
+    const CATEGORIES = [
+      'Addition', 'Subtraction', 'Multiplication', 'Division', 'Fractions', 'Decimals', 'Percentages', 'Algebra', 'Linear Equations', 'Squares & Powers', 'Roots', 'Indices', 'Ratio', 'Proportion', 'Geometry', 'Angles', 'Area & Perimeter', 'Volume', 'Sequences', 'Probability', 'Statistics', 'Coordinate Geometry', 'Inequalities', 'Exponents', 'Surds'
+    ];
+
+    // Utility: random int
+    function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+
+    // Generate a question given a topicIndex and template category
+    function generateQuestion(topicIndex, questionIndex){
+      // difficulty scales slightly by topicIndex
+      const difficulty = 1 + Math.floor(topicIndex/10);
+      const cat = CATEGORIES[topicIndex % CATEGORIES.length];
+      // create a set of templates based on category
+      switch(cat){
+        case 'Addition':{
+          const a=randInt(1,10*difficulty); const b=randInt(1,10*difficulty);
+          return {q:`${a} + ${b} = ?`, a: (a+b).toString()};
+        }
+        case 'Subtraction':{
+          const a=randInt(5,15*difficulty); const b=randInt(1,10*difficulty);
+          return {q:`${a} - ${b} = ?`, a: (a-b).toString()};
+        }
+        case 'Multiplication':{
+          const a=randInt(2,5+difficulty); const b=randInt(2,5+difficulty);
+          return {q:`${a} × ${b} = ?`, a: (a*b).toString()};
+        }
+        case 'Division':{
+          const b=randInt(2,6); const a=b*randInt(2,6);
+          return {q:`${a} ÷ ${b} = ?`, a: (a/b).toString()};
+        }
+        case 'Fractions':{
+          const n1=randInt(1,8); const d1=randInt(2,12); const n2=randInt(1,8); const d2=randInt(2,12);
+          const ans = (n1/d1 + n2/d2).toFixed(3);
+          return {q:`${n1}/${d1} + ${n2}/${d2} = ? (3 dp)`, a: ans};
+        }
+        case 'Decimals':{
+          const a=(randInt(10,999)/100).toFixed(2); const b=(randInt(10,999)/100).toFixed(2);
+          const ans=(parseFloat(a)+parseFloat(b)).toFixed(2);
+          return {q:`${a} + ${b} = ? (2 dp)`, a: ans};
+        }
+        case 'Percentages':{
+          const pct=randInt(5,40); const total=randInt(50,500);
+          const ans=((pct/100)*total).toFixed(2);
+          return {q:`${pct}% of ${total} = ?`, a: ans};
+        }
+        case 'Algebra':{
+          const m=randInt(1,6); const x=randInt(1,10); const c=randInt(0,10);
+          return {q:`If ${m}x + ${c} = ${m*x + c}, find x.`, a: x.toString()};
+        }
+        case 'Linear Equations':{
+          const m=randInt(1,8); const b=randInt(-5,10); const x=randInt(0,12); const y=m*x+b;
+          return {q:`Solve for x: y = ${m}x ${b>=0?'+':'-'} ${Math.abs(b)}. If y = ${y}, find x.`, a: x.toString()};
+        }
+        case 'Squares & Powers':{
+          const n=randInt(2,12);
+          return {q:`What is ${n}²?`, a: (n*n).toString()};
+        }
+        case 'Roots':{
+          const n=randInt(2,15); const sq=n*n;
+          return {q:`What is √${sq}?`, a: n.toString()};
+        }
+        case 'Indices':{
+          const a=randInt(2,4); const b=randInt(2,4);
+          return {q:`What is ${a}^${b}?`, a: (Math.pow(a,b)).toString()};
+        }
+        case 'Ratio':{
+          const a=randInt(1,9); const b=randInt(1,9);
+          return {q:`Express the ratio ${a}:${b} as a fraction in simplest form.`, a: simplifyFraction(a,b)};
+        }
+        case 'Proportion':{
+          const a=randInt(1,12); const b=randInt(1,12); const c=randInt(1,12);
+          const d = Math.round((b*c)/a);
+          return {q:`If ${a} is to ${b} as ${c} is to x, find x.`, a: d.toString()};
+        }
+        case 'Geometry':{
+          const base=randInt(3,12); const height=randInt(2,10);
+          return {q:`Area of triangle with base ${base} and height ${height} = ?`, a: ((base*height)/2).toString()};
+        }
+        case 'Angles':{
+          const a=randInt(20,80); const b=180-a;
+          return {q:`Two angles are supplementary. If one is ${a}°, what is the other?`, a: b.toString()};
+        }
+        case 'Area & Perimeter':{
+          const w=randInt(2,12); const h=randInt(2,12);
+          return {q:`Rectangle width ${w} and height ${h}: Area = ?, Perimeter = ? (comma separated)`, a: `${w*h}, ${2*(w+h)}`};
+        }
+        case 'Volume':{
+          const l=randInt(1,8); const w=randInt(1,8); const h=randInt(1,8);
+          return {q:`Cuboid l=${l}, w=${w}, h=${h}. Volume = ?`, a: (l*w*h).toString()};
+        }
+        case 'Sequences':{
+          const a=randInt(1,8); const d=randInt(1,6); const n=randInt(4,12);
+          return {q:`Arithmetic sequence starting ${a}, common difference ${d}. What is the ${n}th term?`, a: (a + (n-1)*d).toString()};
+        }
+        case 'Probability':{
+          const success=randInt(1,6); const total=randInt(success,12);
+          return {q:`Probability of success = ${success}/${total}. Give decimal (3 dp).`, a: (success/total).toFixed(3)};
+        }
+        case 'Statistics':{
+          const nums = [randInt(1,10),randInt(1,10),randInt(1,10),randInt(1,10),randInt(1,10)];
+          const mean = (nums.reduce((s,x)=>s+x,0)/nums.length).toFixed(2);
+          return {q:`Find the mean of: ${nums.join(', ')}`, a: mean};
+        }
+        case 'Coordinate Geometry':{
+          const x1=randInt(-5,5); const y1=randInt(-5,5); const x2=randInt(-5,5); const y2=randInt(-5,5);
+          const slope = ((y2-y1)/(x2-x1) || 'undefined');
+          return {q:`Points (${x1},${y1}) and (${x2},${y2}). Find the gradient (or 'undefined').`, a: slope.toString()};
+        }
+        case 'Inequalities':{
+          const a=randInt(1,9); const x=randInt(0,9);
+          return {q:`Solve: ${a}x < ${a*(x+2)}. Is x=${x} a solution? (yes/no)`, a: (x < x+2 ? 'yes' : 'no')};
+        }
+        case 'Exponents':{
+          const a=randInt(2,5); const b=randInt(1,4);
+          return {q:`Simplify: (${a}^${b}) * (${a}^${b}) = ?`, a: Math.pow(a,2*b).toString()};
+        }
+        case 'Surds':{
+          const n=randInt(2,20); return {q:`Simplify √${n*n*2} (write exact)`, a: `${n}√2`};
+        }
+        default:{
+          const a=randInt(1,20); const b=randInt(1,20); return {q:`${a} + ${b} = ?`, a: (a+b).toString()}
+        }
+      }
+    }
+
+    function simplifyFraction(n,d){
+      function gcd(a,b){return b?gcd(b,a%b):a}
+      const g=gcd(n,d); return `${n/g}/${d/g}`;
+    }
+
+    // Build topics data structure
+    const topics = Array.from({length:NUM_TOPICS},(_,i)=>{
+      const name = `Topic ${i+1}: ${CATEGORIES[i % CATEGORIES.length]}`;
+      const qs = Array.from({length:Q_PER_TOPIC},(_,j)=>generateQuestion(i,j));
+      return {id:i, name, questions:qs}
+    });
+
+    // UI state
+    let selectedTopicIndex = null;
+    let selectedTopicIds = new Set();
+    let startTime = null;
+    let timerInterval = null;
+
+    // Render topic list
+    const topicsEl = document.getElementById('topics');
+    function renderTopics(filter=''){
+      topicsEl.innerHTML = '';
+      topics.forEach(t=>{
+        if(filter && !t.name.toLowerCase().includes(filter.toLowerCase())) return;
+        const div=document.createElement('div');
+        div.className='topic'+(selectedTopicIds.has(t.id)?' active':'');
+        div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${t.name}</strong><div class='meta'>${t.questions.length} questions</div></div><div><input type='checkbox' data-id='${t.id}' ${selectedTopicIds.has(t.id)?'checked':''}></div></div>`;
+        div.querySelector('input').addEventListener('change',e=>{
+          const id=Number(e.target.dataset.id);
+          if(e.target.checked) selectedTopicIds.add(id); else selectedTopicIds.delete(id);
+          document.getElementById('selectionInfo').innerText = `${selectedTopicIds.size} selected`;
+          div.classList.toggle('active', selectedTopicIds.has(id));
+        });
+        div.addEventListener('click',e=>{
+          if(e.target.tagName==='INPUT') return;
+          selectTopic(t.id);
+        })
+        topicsEl.appendChild(div);
+      })
+    }
+
+    function selectTopic(id){
+      selectedTopicIndex = id;
+      const t=topics[id];
+      document.getElementById('currentTopicName').innerText = t.name;
+      renderQuestions(t);
+      // highlight
+      Array.from(document.querySelectorAll('.topic')).forEach((el,idx)=>{
+        el.classList.toggle('active', topics[idx] && topics[idx].id===id);
+      });
+    }
+
+    function renderQuestions(topic){
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML='';
+      topic.questions.forEach((q, i)=>{
+        const box = document.createElement('div'); box.className='question-box';
+        box.innerHTML = `<div class='qtext'><strong>Q${i+1}.</strong> ${q.q}</div>
+          <div class='answers'>
+            <div class='answer'>
+              <label>Answer:</label>
+              <input type='text' data-ans-index='${i}' value=''>
+            </div>
+          </div>
+          <div class='meta' style='margin-top:8px'>Correct answer: <span class='correct' data-correct='${q.a}'>Hidden</span></div>`;
+        container.appendChild(box);
+      });
+      // reset score
+      document.getElementById('score').innerText = `0/${topic.questions.length}`;
+    }
+
+    // Timer
+    function startTimer(){
+      if(timerInterval) clearInterval(timerInterval);
+      startTime = Date.now();
+      timerInterval = setInterval(()=>{
+        const diff = Math.floor((Date.now()-startTime)/1000);
+        const mm = String(Math.floor(diff/60)).padStart(2,'0');
+        const ss = String(diff%60).padStart(2,'0');
+        document.getElementById('timer').innerText = `${mm}:${ss}`;
+      },250);
+    }
+    function stopTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=null }
+
+    // Submit answers
+    document.getElementById('submitAnswers').addEventListener('click',()=>{
+      if(selectedTopicIndex===null){alert('Pick a topic first');return}
+      const topic = topics[selectedTopicIndex];
+      const inputs = Array.from(document.querySelectorAll('#questionsContainer input[type=text]'));
+      let correct = 0;
+      inputs.forEach((inp, i)=>{
+        const user = inp.value.trim();
+        const corr = topic.questions[i].a.toString().trim();
+        const corrEl = inp.closest('.question-box').querySelector('.correct');
+        // basic normalization
+        if(normalize(user) === normalize(corr)){
+          correct++;
+          corrEl.innerText = '\u2713 ' + corr; // tick
+        } else {
+          corrEl.innerText = '\u2717 ' + corr; // cross
+        }
+      });
+      document.getElementById('score').innerText = `${correct}/${topic.questions.length}`;
+    });
+
+    function normalize(s){ return s.replace(/\s+/g,'').replace(/,/g,'.').toLowerCase(); }
+
+    // Navigation
+    document.getElementById('nextTopic').addEventListener('click',()=>{
+      if(selectedTopicIndex===null) return selectTopic(0);
+      const next = (selectedTopicIndex+1)%topics.length; selectTopic(next);
+    });
+    document.getElementById('prevTopic').addEventListener('click',()=>{
+      if(selectedTopicIndex===null) return selectTopic(0);
+      const prev = (selectedTopicIndex-1+topics.length)%topics.length; selectTopic(prev);
+    });
+
+    // Search
+    document.getElementById('topicSearch').addEventListener('input',(e)=>renderTopics(e.target.value));
+
+    // Start test: if multiple selected, create a combined test with selected topics. Otherwise current topic only.
+    document.getElementById('startBtn').addEventListener('click',()=>{
+      if(selectedTopicIds.size>0){
+        startCombinedTest(Array.from(selectedTopicIds));
+      } else if(selectedTopicIndex!==null){
+        startSingleTest(selectedTopicIndex);
+      } else {
+        selectTopic(0); startSingleTest(0);
+      }
+    });
+
+    function startSingleTest(topicId){
+      startTimer();
+      selectTopic(topicId);
+    }
+
+    function startCombinedTest(ids){
+      // build a flat list of questions from chosen topics
+      const flat = [];
+      ids.forEach(id=>{
+        const t=topics[id];
+        t.questions.forEach(q=>flat.push({topicName:t.name, q:q.q, a:q.a}));
+      });
+      // shuffle
+      for(let i=flat.length-1;i>0;i--){const j=randInt(0,i);[flat[i],flat[j]]=[flat[j],flat[i]]}
+      // render a combined page
+      const container = document.getElementById('questionsContainer'); container.innerHTML='';
+      flat.forEach((item,i)=>{
+        const box = document.createElement('div'); box.className='question-box';
+        box.innerHTML = `<div class='qtext'><strong>Q${i+1}.</strong> (${item.topicName}) ${item.q}</div>
+          <div class='answers'><div class='answer'><label>Answer:</label><input type='text' data-ans-index='${i}'></div></div>
+          <div class='meta' style='margin-top:8px'>Correct answer: <span class='correct' data-correct='${item.a}'>Hidden</span></div>`;
+        container.appendChild(box);
+      });
+      document.getElementById('currentTopicName').innerText = `Combined Test — ${ids.length} topics, ${flat.length} questions`;
+      document.getElementById('score').innerText = `0/${flat.length}`;
+      startTimer();
+    }
+
+    // Shuffle button regenerates numbers to give a fresh set
+    document.getElementById('shuffleBtn').addEventListener('click',()=>{
+      // regenerate all questions
+      for(let i=0;i<topics.length;i++){
+        topics[i].questions = Array.from({length:Q_PER_TOPIC},(_,j)=>generateQuestion(i,j));
+      }
+      if(selectedTopicIndex!==null) renderQuestions(topics[selectedTopicIndex]);
+      alert('Questions shuffled / regenerated.');
+    });
+
+    // export entire app as HTML for offline use
+    document.getElementById('exportBtn').addEventListener('click',()=>{
+      const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='maths-watch-like.html'; document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    // select all / clear
+    document.getElementById('selectAll').addEventListener('click',()=>{ topics.forEach(t=>selectedTopicIds.add(t.id)); document.getElementById('selectionInfo').innerText = `${selectedTopicIds.size} selected`; renderTopics(document.getElementById('topicSearch').value); });
+    document.getElementById('clearSelection').addEventListener('click',()=>{ selectedTopicIds.clear(); document.getElementById('selectionInfo').innerText = `0 selected`; renderTopics(document.getElementById('topicSearch').value); });
+
+    // initialise
+    renderTopics();
+    // preselect topic 0
+    //selectTopic(0);
+  </script>
 </body>
 </html>
