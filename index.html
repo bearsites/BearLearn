@@ -1,167 +1,76 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LearnHub — Gamified English, Maths, Spanish, History</title>
-<style>
-:root{
-  --bg:#0f1724;--card:#111827;--accent:#7dd3fc;--muted:#9aa6b2;
-  --radius:12px;--gap:14px;font-family:system-ui,Inter,sans-serif;
-}
-body{margin:0;background:var(--bg);color:#fff;display:flex;justify-content:center;padding:20px}
-.container{max-width:800px;width:100%}
-h1,h2,h3{margin:0}
-nav{display:flex;justify-content:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-nav button{padding:8px 12px;border:0;border-radius:8px;background:rgba(255,255,255,0.05);color:#fff;cursor:pointer}
-nav button.active{background:var(--accent);color:#000}
-.lesson-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.lesson{background:var(--card);padding:12px;border-radius:var(--radius);text-align:center;cursor:pointer;position:relative}
-.lesson.locked{opacity:0.4;cursor:not-allowed}
-.progress{height:8px;background:#333;border-radius:4px;margin-top:6px;overflow:hidden}
-.progress-bar{height:100%;background:var(--accent);width:0%}
-#quiz,#lessonView{background:var(--card);padding:16px;border-radius:var(--radius);margin-top:12px}
-.choice{background:rgba(255,255,255,0.05);padding:8px;border-radius:8px;margin:6px 0;cursor:pointer}
-.choice.correct{background:rgba(34,197,94,0.3)}
-.choice.incorrect{background:rgba(239,68,68,0.3)}
-#hud{display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;color:var(--muted)}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Under Maintenance</title>
+    <style>
+        /* Reset default margin and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f2f2f2;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 48px;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #ff6b6b;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <h1>LearnHub</h1>
-  <div id="hud">
-    <div>XP: <span id="xp">0</span></div>
-    <div>🔥 Streak: <span id="streak">0</span></div>
-  </div>
-  <nav id="subjectNav"></nav>
-  <div id="content"></div>
-</div>
-
-<script>
-// -------------------- Content --------------------
-const subjects = {
-  english:{
-    lessons:[
-      {title:"Basics: Punctuation", body:"Commas separate ideas. Full stops end sentences.", quiz:[
-        {q:"Which is correct?",c:["She bought apples oranges.","She bought apples, oranges."],a:1},
-      ]},
-      {title:"Confusing words", body:"Their = possessive, There = place, They're = they are.", quiz:[
-        {q:"___ going to school.",c:["Their","There","They're"],a:2},
-      ]}
-    ]
-  },
-  maths:{
-    lessons:[
-      {title:"Add & Subtract",body:"2+3=5, 5-2=3",quiz:[{q:"5+4?",c:["8","9","10"],a:1}]},
-      {title:"Multiply",body:"3×4=12",quiz:[{q:"6×3?",c:["18","12"],a:0}]}
-    ]
-  },
-  spanish:{
-    lessons:[
-      {title:"Greetings",body:"Hola = Hello",quiz:[{q:"Hello in Spanish?",c:["Hola","Bonjour"],a:0}]}
-    ]
-  },
-  history:{
-    lessons:[
-      {title:"WW2",body:"Started 1939, ended 1945.",quiz:[{q:"WW2 ended in?",c:["1945","1939"],a:0}]}
-    ]
-  }
-};
-
-// -------------------- State --------------------
-let state = JSON.parse(localStorage.getItem("learnhub_v1")||"{}");
-state.xp = state.xp||0;
-state.streak = state.streak||0;
-state.lastDate = state.lastDate||null;
-state.progress = state.progress||{english:0,maths:0,spanish:0,history:0};
-
-// Streak calculation
-const today = new Date().toDateString();
-if(state.lastDate!==today){
-  const yesterday = new Date(Date.now()-86400000).toDateString();
-  if(state.lastDate===yesterday) state.streak++;
-  else state.streak=1;
-  state.lastDate=today;
-  saveState();
-}
-
-function saveState(){
-  localStorage.setItem("learnhub_v1",JSON.stringify(state));
-  document.getElementById("xp").textContent=state.xp;
-  document.getElementById("streak").textContent=state.streak;
-}
-
-// -------------------- UI Rendering --------------------
-const nav = document.getElementById("subjectNav");
-const content = document.getElementById("content");
-
-function renderNav(){
-  nav.innerHTML="";
-  Object.keys(subjects).forEach(sub=>{
-    const btn=document.createElement("button");
-    btn.textContent=sub[0].toUpperCase()+sub.slice(1);
-    btn.onclick=()=>renderSubject(sub);
-    nav.appendChild(btn);
-  });
-}
-function renderSubject(sub){
-  nav.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
-  nav.querySelectorAll("button")[Object.keys(subjects).indexOf(sub)].classList.add("active");
-  const prog=state.progress[sub]||0;
-  const list=document.createElement("div");
-  list.className="lesson-list";
-  subjects[sub].lessons.forEach((l,i)=>{
-    const div=document.createElement("div");
-    div.className="lesson"+(i>prog?" locked":"");
-    div.innerHTML=`<h3>${l.title}</h3><div class="progress"><div class="progress-bar" style="width:${i<prog?100:0}%"></div></div>`;
-    if(i<=prog) div.onclick=()=>openLesson(sub,i);
-    list.appendChild(div);
-  });
-  content.innerHTML="";
-  content.appendChild(list);
-}
-
-function openLesson(sub,i){
-  const lesson=subjects[sub].lessons[i];
-  content.innerHTML=`<div id="lessonView"><h2>${lesson.title}</h2><p>${lesson.body}</p><button onclick="startQuiz('${sub}',${i})">Start Quiz</button></div>`;
-}
-
-function startQuiz(sub,i){
-  const lesson=subjects[sub].lessons[i];
-  let index=0,correct=0;
-  content.innerHTML=`<div id="quiz"></div>`;
-  const qDiv=document.getElementById("quiz");
-  showQ();
-
-  function showQ(){
-    const q=lesson.quiz[index];
-    qDiv.innerHTML=`<h3>${q.q}</h3>`+q.c.map((c,j)=>`<div class="choice" data-i="${j}">${c}</div>`).join("");
-    qDiv.querySelectorAll(".choice").forEach(ch=>{
-      ch.onclick=()=>{
-        if(ch.classList.contains("correct")||ch.classList.contains("incorrect")) return;
-        if(+ch.dataset.i===q.a){ch.classList.add("correct");correct++;state.xp+=10;}
-        else ch.classList.add("incorrect");
-        saveState();
-        setTimeout(()=>{
-          index++;
-          if(index<lesson.quiz.length) showQ();
-          else finish();
-        },600);
-      };
-    });
-  }
-
-  function finish(){
-    state.progress[sub]=Math.max(state.progress[sub]||0,i+1);
-    saveState();
-    renderSubject(sub);
-  }
-}
-
-renderNav();
-renderSubject("english");
-saveState();
-</script>
+    <div class="container">
+        <h1>We'll be back soon!</h1>
+        <p>Our website is currently undergoing scheduled maintenance.<br>
+        Thank you for your patience.</p>
+        <div class="spinner"></div>
+        <footer>&copy; 2025 Your Company Name. All rights reserved.</footer>
+    </div>
 </body>
 </html>
