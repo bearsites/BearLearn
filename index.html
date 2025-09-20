@@ -1,482 +1,167 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Learning Hub — English · Maths · Spanish · History</title>
-  <meta name="description" content="Simple learning platform for English, Maths, Spanish and History. Interactive lessons, quizzes, flashcards and progress saved locally."/>
-  <style>
-    /* --- Basic layout --- */
-    :root{
-      --bg:#0f1724; --card:#0b1220; --muted:#9aa6b2; --accent:#7dd3fc;
-      --glass: rgba(255,255,255,0.03);
-      --radius:12px; --gap:16px; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; background:
-      radial-gradient(1000px 400px at 10% 10%, rgba(125,211,252,0.03), transparent 8%),
-      linear-gradient(180deg, #071023 0%, #05111a 60%);
-      color:#e6eef6; -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      padding:20px;
-      display:flex; align-items:flex-start; justify-content:center;
-    }
-
-    .container{
-      width:1100px; max-width:100%;
-      display:grid; grid-template-columns:260px 1fr;
-      gap:20px;
-    }
-
-    /* Sidebar */
-    .sidebar{
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:var(--radius); padding:18px; height:calc(100vh - 40px);
-      position:sticky; top:20px; overflow:auto;
-      box-shadow:0 6px 30px rgba(2,6,23,0.6);
-    }
-    .logo{font-weight:700; font-size:18px; letter-spacing:0.2px; margin-bottom:12px; color:var(--accent)}
-    .nav{display:flex; flex-direction:column; gap:8px}
-    .nav button{
-      background:transparent; color:inherit; border:0; text-align:left; padding:10px 12px; border-radius:10px;
-      cursor:pointer; font-size:15px; display:flex; gap:8px; align-items:center;
-    }
-    .nav button:hover{background:var(--glass)}
-    .nav button.active{background:linear-gradient(90deg, rgba(125,211,252,0.08), rgba(125,211,252,0.02)); color:var(--accent)}
-
-    .meta{margin-top:12px; font-size:13px; color:var(--muted)}
-    .small{font-size:13px; color:var(--muted); margin-top:8px}
-
-    /* Main */
-    .main{
-      min-height:80vh; background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.008));
-      border-radius:var(--radius); padding:20px; box-shadow:0 10px 40px rgba(2,6,23,0.6);
-    }
-
-    header h1{margin:0; font-size:20px}
-    header p{margin:6px 0 16px 0; color:var(--muted)}
-
-    .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px}
-
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
-      padding:14px; border-radius:12px; min-height:120px; display:flex; flex-direction:column; gap:10px;
-      border:1px solid rgba(255,255,255,0.02)
-    }
-    .card h3{margin:0 0 4px 0; font-size:16px}
-    .card p{margin:0; color:var(--muted); font-size:14px; flex:1}
-
-    .actions{display:flex; gap:8px; margin-top:auto}
-    .btn{
-      padding:8px 12px; border-radius:10px; background:transparent; border:1px solid rgba(255,255,255,0.04);
-      cursor:pointer; color:inherit; font-size:13px;
-    }
-    .btn.primary{background:var(--accent); color:#042028; border:0}
-    .btn.ghost{background:transparent; border:1px dashed rgba(255,255,255,0.03)}
-    .quiz-area, .lesson-area, .flash-area, .math-area, .history-area{margin-top:12px}
-
-    /* Quiz UI */
-    .question{font-weight:600; margin-bottom:8px}
-    .choices{display:flex; flex-direction:column; gap:8px}
-    .choice{padding:10px; border-radius:8px; background:rgba(255,255,255,0.02); cursor:pointer}
-    .choice.correct{outline:2px solid rgba(34,197,94,0.25); background:linear-gradient(90deg, rgba(34,197,94,0.06), transparent)}
-    .choice.incorrect{outline:2px solid rgba(239,68,68,0.25); background:linear-gradient(90deg, rgba(239,68,68,0.04), transparent)}
-    .result{margin-top:10px; font-weight:700}
-
-    /* Flashcards */
-    .flash-grid{display:flex; gap:8px; flex-wrap:wrap}
-    .flash{
-      width:180px; height:110px; border-radius:10px; padding:12px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      display:flex; align-items:center; justify-content:center; text-align:center; cursor:pointer; user-select:none;
-      position:relative;
-    }
-    .flash .known{position:absolute; top:8px; right:8px; font-size:12px; color:var(--muted)}
-
-    /* Controls area */
-    .controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:12px}
-    input[type="text"], textarea, select{
-      background:transparent; border:1px solid rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px; color:inherit;
-    }
-
-    footer{margin-top:18px; color:var(--muted); font-size:13px}
-    @media (max-width:900px){
-      .container{grid-template-columns:1fr; padding-bottom:20px}
-      .sidebar{position:relative; height:auto}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LearnHub — Gamified English, Maths, Spanish, History</title>
+<style>
+:root{
+  --bg:#0f1724;--card:#111827;--accent:#7dd3fc;--muted:#9aa6b2;
+  --radius:12px;--gap:14px;font-family:system-ui,Inter,sans-serif;
+}
+body{margin:0;background:var(--bg);color:#fff;display:flex;justify-content:center;padding:20px}
+.container{max-width:800px;width:100%}
+h1,h2,h3{margin:0}
+nav{display:flex;justify-content:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+nav button{padding:8px 12px;border:0;border-radius:8px;background:rgba(255,255,255,0.05);color:#fff;cursor:pointer}
+nav button.active{background:var(--accent);color:#000}
+.lesson-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.lesson{background:var(--card);padding:12px;border-radius:var(--radius);text-align:center;cursor:pointer;position:relative}
+.lesson.locked{opacity:0.4;cursor:not-allowed}
+.progress{height:8px;background:#333;border-radius:4px;margin-top:6px;overflow:hidden}
+.progress-bar{height:100%;background:var(--accent);width:0%}
+#quiz,#lessonView{background:var(--card);padding:16px;border-radius:var(--radius);margin-top:12px}
+.choice{background:rgba(255,255,255,0.05);padding:8px;border-radius:8px;margin:6px 0;cursor:pointer}
+.choice.correct{background:rgba(34,197,94,0.3)}
+.choice.incorrect{background:rgba(239,68,68,0.3)}
+#hud{display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;color:var(--muted)}
+</style>
 </head>
 <body>
-  <div class="container" role="application">
-    <aside class="sidebar" aria-label="Navigation">
-      <div class="logo">Learning Hub</div>
-      <nav class="nav" id="subjectNav">
-        <button data-view="dashboard" class="active" title="Overview">🏠 Dashboard</button>
-        <button data-subject="english" data-view="subject">📚 English</button>
-        <button data-subject="maths" data-view="subject">➗ Maths</button>
-        <button data-subject="spanish" data-view="subject">🗣️ Spanish</button>
-        <button data-subject="history" data-view="subject">📜 History</button>
-      </nav>
-
-      <div class="meta" id="progressSummary">
-        <div style="font-weight:600">Progress</div>
-        <div id="progressText" class="small">No activity yet — start a quiz or flashcards!</div>
-      </div>
-
-      <div class="small" style="margin-top:14px">
-        This is a static, client-side learning site. Your progress is saved locally in your browser.
-      </div>
-    </aside>
-
-    <main class="main" id="main">
-      <header>
-        <h1 id="mainTitle">Dashboard</h1>
-        <p id="mainSubtitle">Choose a subject from the left to view lessons, quizzes and activities.</p>
-      </header>
-
-      <section id="content">
-        <!-- Dashboard -->
-        <div id="dashboardView">
-          <div class="cards" aria-live="polite">
-            <div class="card">
-              <h3>English</h3>
-              <p>Grammar tips, reading comprehension and vocabulary practice. Try a quiz or flip through flashcards.</p>
-              <div class="actions">
-                <button class="btn primary" data-subject="english" data-view="subject">Open English</button>
-                <button class="btn" onclick="startQuick('english')">Quick Quiz</button>
-              </div>
-            </div>
-
-            <div class="card">
-              <h3>Maths</h3>
-              <p>Practice arithmetic, algebra starter problems, and interactive exercises that generate new questions.</p>
-              <div class="actions">
-                <button class="btn primary" data-subject="maths" data-view="subject">Open Maths</button>
-                <button class="btn" onclick="startQuick('maths')">Practice Now</button>
-              </div>
-            </div>
-
-            <div class="card">
-              <h3>Spanish</h3>
-              <p>Beginner vocabulary, verb conjugation basics and conversational phrases. Flashcards included.</p>
-              <div class="actions">
-                <button class="btn primary" data-subject="spanish" data-view="subject">Open Spanish</button>
-                <button class="btn" onclick="startQuick('spanish')">Vocab Quiz</button>
-              </div>
-            </div>
-
-            <div class="card">
-              <h3>History</h3>
-              <p>Short timelines and comprehension quizzes for core events. Great for revision and timeline memory.</p>
-              <div class="actions">
-                <button class="btn primary" data-subject="history" data-view="subject">Open History</button>
-                <button class="btn" onclick="startQuick('history')">Start Quiz</button>
-              </div>
-            </div>
-          </div>
-
-          <footer>
-            Tip: edit the lessons and question sets inside the script section of this file to customise content for your learners.
-          </footer>
-        </div>
-
-        <!-- Subject Template (hidden, populated by JS) -->
-        <div id="subjectTemplate" hidden>
-          <div class="controls">
-            <select id="activitySelect" aria-label="Activity">
-              <option value="lessons">Lessons</option>
-              <option value="quiz">Quiz</option>
-              <option value="flashcards">Flashcards</option>
-              <option value="practice">Practice</option>
-              <option value="notes">Notes</option>
-            </select>
-            <button class="btn" id="btnStart">Start</button>
-            <button class="btn ghost" id="btnResetProgress">Reset Progress</button>
-            <div style="margin-left:auto" class="small">Subject: <strong id="subjectName"></strong></div>
-          </div>
-
-          <div class="lesson-area" id="lessonArea" hidden>
-            <div id="lessonsList" class="cards"></div>
-          </div>
-
-          <div class="quiz-area" id="quizArea" hidden>
-            <div id="quizContainer"></div>
-          </div>
-
-          <div class="flash-area" id="flashArea" hidden>
-            <div id="flashControls" style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
-              <button class="btn" id="shuffleFlash">Shuffle</button>
-              <button class="btn" id="resetFlash">Reset Known</button>
-              <div style="margin-left:auto" class="small" id="flashStats"></div>
-            </div>
-            <div class="flash-grid" id="flashGrid"></div>
-          </div>
-
-          <div class="math-area" id="mathArea" hidden>
-            <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px">
-              <label>Difficulty
-                <select id="mathDifficulty">
-                  <option value="easy">Easy (addition/subtraction)</option>
-                  <option value="medium">Medium (multiplication)</option>
-                  <option value="hard">Hard (mixed)</option>
-                </select>
-              </label>
-              <button class="btn primary" id="newMath">New Problem</button>
-              <div style="margin-left:auto" class="small" id="mathScore">Score: 0</div>
-            </div>
-            <div id="mathProblem" style="font-size:20px; font-weight:700; margin-bottom:8px"></div>
-            <div style="display:flex; gap:8px;">
-              <input type="text" id="mathAnswer" placeholder="Type your answer" />
-              <button class="btn" id="mathSubmit">Submit</button>
-            </div>
-            <div id="mathFeedback" style="margin-top:10px"></div>
-          </div>
-
-          <div class="history-area" id="historyArea" hidden>
-            <div id="timeline"></div>
-          </div>
-
-          <div id="notesArea" hidden>
-            <h3>Notes</h3>
-            <textarea id="notesField" rows="6" style="width:100%"></textarea>
-            <div style="display:flex; gap:8px; margin-top:8px">
-              <button class="btn primary" id="saveNotes">Save Notes</button>
-              <button class="btn" id="clearNotes">Clear</button>
-              <div style="margin-left:auto" class="small">Saved locally</div>
-            </div>
-          </div>
-        </div>
-
-      </section>
-    </main>
+<div class="container">
+  <h1>LearnHub</h1>
+  <div id="hud">
+    <div>XP: <span id="xp">0</span></div>
+    <div>🔥 Streak: <span id="streak">0</span></div>
   </div>
+  <nav id="subjectNav"></nav>
+  <div id="content"></div>
+</div>
 
-  <script>
-    /* ------------------------
-       Content data: lessons, quizzes, flashcards
-       Edit this section to customise the platform content.
-       ------------------------ */
-    const content = {
-      english: {
-        title: "English",
-        lessons: [
-          { id: "eng-1", title:"Punctuation: commas & full stops",
-            body:"Commas separate ideas or items. Full stops (periods) end sentences. Example: She bought apples, oranges, and bananas."},
-          { id: "eng-2", title:"Common Confusions: their / there / they're",
-            body:"Their = possessive (their coat). There = place (over there). They're = they are (they're coming)."}
-        ],
-        quiz:[
-          {q:"Choose the correct form: _____ going to the cinema.", choices:["Their","There","They're"], a:2},
-          {q:"Which sentence uses a comma correctly?", choices:["She bought apples oranges and bananas.","She bought apples, oranges, and bananas.","She, bought apples and oranges."], a:1}
-        ],
-        flashcards:[
-          {front:"Their / There / They're", back:"Their = possessive. There = place. They're = they are."},
-          {front:"Adjective", back:"A word that describes a noun. e.g. red, tall, slow."}
-        ]
-      },
+<script>
+// -------------------- Content --------------------
+const subjects = {
+  english:{
+    lessons:[
+      {title:"Basics: Punctuation", body:"Commas separate ideas. Full stops end sentences.", quiz:[
+        {q:"Which is correct?",c:["She bought apples oranges.","She bought apples, oranges."],a:1},
+      ]},
+      {title:"Confusing words", body:"Their = possessive, There = place, They're = they are.", quiz:[
+        {q:"___ going to school.",c:["Their","There","They're"],a:2},
+      ]}
+    ]
+  },
+  maths:{
+    lessons:[
+      {title:"Add & Subtract",body:"2+3=5, 5-2=3",quiz:[{q:"5+4?",c:["8","9","10"],a:1}]},
+      {title:"Multiply",body:"3×4=12",quiz:[{q:"6×3?",c:["18","12"],a:0}]}
+    ]
+  },
+  spanish:{
+    lessons:[
+      {title:"Greetings",body:"Hola = Hello",quiz:[{q:"Hello in Spanish?",c:["Hola","Bonjour"],a:0}]}
+    ]
+  },
+  history:{
+    lessons:[
+      {title:"WW2",body:"Started 1939, ended 1945.",quiz:[{q:"WW2 ended in?",c:["1945","1939"],a:0}]}
+    ]
+  }
+};
 
-      maths: {
-        title:"Maths",
-        lessons:[
-          {id:"m-1", title:"Addition & Subtraction basics", body:"Add to combine, subtract to remove. Try small numbers first and check with inverse operation."},
-          {id:"m-2", title:"Multiplication as repeated addition", body:"3 × 4 = 3 + 3 + 3 + 3 = 12. Use times tables to help."}
-        ],
-        quiz:[
-          {q:"What is 7 + 5?", choices:["11","12","13"], a:1},
-          {q:"What is 6 × 4?", choices:["24","20","26"], a:0}
-        ],
-        flashcards:[
-          {front:"What is 8 × 7?", back:"56"},
-          {front:"What is 45 ÷ 9?", back:"5"}
-        ]
-      },
+// -------------------- State --------------------
+let state = JSON.parse(localStorage.getItem("learnhub_v1")||"{}");
+state.xp = state.xp||0;
+state.streak = state.streak||0;
+state.lastDate = state.lastDate||null;
+state.progress = state.progress||{english:0,maths:0,spanish:0,history:0};
 
-      spanish: {
-        title:"Spanish",
-        lessons:[
-          {id:"s-1", title:"Basic greetings", body:"Hola = Hello. ¿Cómo estás? = How are you? Buenas tardes = Good afternoon."},
-          {id:"s-2", title:"Numbers 1–10", body:"uno, dos, tres, cuatro, cinco, seis, siete, ocho, nueve, diez"}
-        ],
-        quiz:[
-          {q:"How do you say 'Hello' in Spanish?", choices:["Bonjour","Hola","Ciao"], a:1},
-          {q:"What is 'dos' in English?", choices:["two","ten","three"], a:0}
-        ],
-        flashcards:[
-          {front:"Hola", back:"Hello"},
-          {front:"Gracias", back:"Thank you"}
-        ]
-      },
+// Streak calculation
+const today = new Date().toDateString();
+if(state.lastDate!==today){
+  const yesterday = new Date(Date.now()-86400000).toDateString();
+  if(state.lastDate===yesterday) state.streak++;
+  else state.streak=1;
+  state.lastDate=today;
+  saveState();
+}
 
-      history: {
-        title:"History",
-        lessons:[
-          {id:"h-1", title:"Industrial Revolution (brief)", body:"A period of rapid technological and social change, roughly late 18th to 19th century in Britain and beyond."},
-          {id:"h-2", title:"World War II — key dates", body:"1939: War begins. 1945: War ends. Many nations involved; study causes and consequences."}
-        ],
-        quiz:[
-          {q:"When did World War II end (year)?", choices:["1944","1945","1950"], a:1},
-          {q:"Which invention was central to the Industrial Revolution?", choices:["Steam engine","Internet","Television"], a:0}
-        ],
-        flashcards:[
-          {front:"1939", back:"Start of World War II"},
-          {front:"Steam engine (18th c.)", back:"Powered factories and transport — key to Industrial Revolution"}
-        ],
-        timeline:[
-          {year: 1776, title:"American Declaration of Independence"},
-          {year: 1789, title:"French Revolution begins"},
-          {year: 1914, title:"World War I begins"},
-          {year: 1939, title:"World War II begins"},
-          {year: 1945, title:"World War II ends"}
-        ]
-      }
-    };
+function saveState(){
+  localStorage.setItem("learnhub_v1",JSON.stringify(state));
+  document.getElementById("xp").textContent=state.xp;
+  document.getElementById("streak").textContent=state.streak;
+}
 
-    /* ------------------------
-       App logic
-       ------------------------ */
-    const nav = document.getElementById('subjectNav');
-    const mainTitle = document.getElementById('mainTitle');
-    const mainSubtitle = document.getElementById('mainSubtitle');
-    const contentArea = document.getElementById('content');
-    const dashboardView = document.getElementById('dashboardView');
-    const subjectTemplate = document.getElementById('subjectTemplate');
+// -------------------- UI Rendering --------------------
+const nav = document.getElementById("subjectNav");
+const content = document.getElementById("content");
 
-    // Progress object saved in localStorage
-    const STORAGE_KEY = 'learning_hub_progress_v1';
-    let progress = loadProgress();
+function renderNav(){
+  nav.innerHTML="";
+  Object.keys(subjects).forEach(sub=>{
+    const btn=document.createElement("button");
+    btn.textContent=sub[0].toUpperCase()+sub.slice(1);
+    btn.onclick=()=>renderSubject(sub);
+    nav.appendChild(btn);
+  });
+}
+function renderSubject(sub){
+  nav.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+  nav.querySelectorAll("button")[Object.keys(subjects).indexOf(sub)].classList.add("active");
+  const prog=state.progress[sub]||0;
+  const list=document.createElement("div");
+  list.className="lesson-list";
+  subjects[sub].lessons.forEach((l,i)=>{
+    const div=document.createElement("div");
+    div.className="lesson"+(i>prog?" locked":"");
+    div.innerHTML=`<h3>${l.title}</h3><div class="progress"><div class="progress-bar" style="width:${i<prog?100:0}%"></div></div>`;
+    if(i<=prog) div.onclick=()=>openLesson(sub,i);
+    list.appendChild(div);
+  });
+  content.innerHTML="";
+  content.appendChild(list);
+}
 
-    function loadProgress(){
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : {subjects:{}};
-      }catch(e){
-        return {subjects:{}};
-      }
-    }
-    function saveProgress(){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-      renderProgressSummary();
-    }
+function openLesson(sub,i){
+  const lesson=subjects[sub].lessons[i];
+  content.innerHTML=`<div id="lessonView"><h2>${lesson.title}</h2><p>${lesson.body}</p><button onclick="startQuiz('${sub}',${i})">Start Quiz</button></div>`;
+}
 
-    function renderProgressSummary(){
-      const text = document.getElementById('progressText');
-      const subjects = Object.keys(content);
-      let lines = [];
-      subjects.forEach(s=>{
-        const p = progress.subjects[s] || {};
-        const score = typeof p.score === 'number' ? p.score : '-';
-        const quizzes = p.quizzes || 0;
-        lines.push(`${content[s].title}: quizzes ${quizzes}, score ${score}`);
-      });
-      text.textContent = lines.join(' · ');
-    }
-    renderProgressSummary();
+function startQuiz(sub,i){
+  const lesson=subjects[sub].lessons[i];
+  let index=0,correct=0;
+  content.innerHTML=`<div id="quiz"></div>`;
+  const qDiv=document.getElementById("quiz");
+  showQ();
 
-    // Navigation clicks
-    nav.addEventListener('click', e=>{
-      const btn = e.target.closest('button[data-view]');
-      if(!btn) return;
-      const view = btn.getAttribute('data-view');
-      const subjectKey = btn.getAttribute('data-subject');
-      document.querySelectorAll('#subjectNav button').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      if(view === 'dashboard'){
-        showDashboard();
-      } else {
-        showSubject(subjectKey);
-      }
+  function showQ(){
+    const q=lesson.quiz[index];
+    qDiv.innerHTML=`<h3>${q.q}</h3>`+q.c.map((c,j)=>`<div class="choice" data-i="${j}">${c}</div>`).join("");
+    qDiv.querySelectorAll(".choice").forEach(ch=>{
+      ch.onclick=()=>{
+        if(ch.classList.contains("correct")||ch.classList.contains("incorrect")) return;
+        if(+ch.dataset.i===q.a){ch.classList.add("correct");correct++;state.xp+=10;}
+        else ch.classList.add("incorrect");
+        saveState();
+        setTimeout(()=>{
+          index++;
+          if(index<lesson.quiz.length) showQ();
+          else finish();
+        },600);
+      };
     });
+  }
 
-    // enable buttons in dashboard area that open subjects
-    document.querySelectorAll('[data-subject][data-view="subject"]').forEach(btn=>{
-      btn.addEventListener('click', ()=> showSubject(btn.getAttribute('data-subject')));
-    });
+  function finish(){
+    state.progress[sub]=Math.max(state.progress[sub]||0,i+1);
+    saveState();
+    renderSubject(sub);
+  }
+}
 
-    function showDashboard(){
-      mainTitle.textContent = 'Dashboard';
-      mainSubtitle.textContent = 'Choose a subject from the left to view lessons, quizzes and activities.';
-      dashboardView.hidden = false;
-      // hide subject template if present
-      subjectTemplate.hidden = true;
-    }
-
-    // Quick start called from dashboard
-    window.startQuick = function(subjectKey){
-      document.querySelectorAll('#subjectNav button').forEach(b=>b.classList.remove('active'));
-      const btn = document.querySelector(`#subjectNav button[data-subject="${subjectKey}"]`);
-      if(btn) btn.classList.add('active');
-      showSubject(subjectKey, {activity:'quiz', autoStart:true});
-    }
-
-    function showSubject(subjectKey, opts = {}){
-      const subject = content[subjectKey];
-      if(!subject) return showDashboard();
-      mainTitle.textContent = subject.title;
-      mainSubtitle.textContent = `Lessons, quizzes, flashcards and practice for ${subject.title}.`;
-
-      dashboardView.hidden = true;
-      subjectTemplate.hidden = false;
-
-      // ensure the template areas are visible/hidden appropriately
-      document.getElementById('subjectName').textContent = subject.title;
-      document.getElementById('activitySelect').value = opts.activity || 'lessons';
-
-      // render lessons
-      const lessonsList = document.getElementById('lessonsList');
-      lessonsList.innerHTML = '';
-      subject.lessons.forEach(l=>{
-        const el = document.createElement('div');
-        el.className = 'card';
-        el.innerHTML = `<h3>${l.title}</h3><p>${l.body}</p><div class="actions"><button class="btn" onclick="openLesson('${subjectKey}','${l.id}')">Open</button><button class="btn ghost" onclick="markLessonDone('${subjectKey}','${l.id}')">Mark done</button></div>`;
-        lessonsList.appendChild(el);
-      });
-
-      // wire activity start button
-      document.getElementById('btnStart').onclick = ()=>startActivity(subjectKey);
-      document.getElementById('btnResetProgress').onclick = ()=>{ if(confirm('Reset progress for this subject?')) resetSubjectProgress(subjectKey) };
-
-      // flashcard controls
-      document.getElementById('shuffleFlash').onclick = ()=>renderFlashcards(subjectKey, {shuffle:true});
-      document.getElementById('resetFlash').onclick = ()=>resetFlashKnown(subjectKey);
-
-      // notes
-      const notesKey = `notes_${subjectKey}`;
-      const notesField = document.getElementById('notesField');
-      notesField.value = localStorage.getItem(notesKey) || '';
-      document.getElementById('saveNotes').onclick = ()=> { localStorage.setItem(notesKey, notesField.value); alert('Notes saved locally.') }
-      document.getElementById('clearNotes').onclick = ()=> { notesField.value=''; localStorage.removeItem(notesKey); }
-
-      // math controls
-      document.getElementById('newMath').onclick = ()=> newMathProblem();
-      document.getElementById('mathSubmit').onclick = ()=> submitMathAnswer();
-
-      // start requested activity
-      if(opts.autoStart){
-        document.getElementById('activitySelect').value = opts.activity || 'quiz';
-        startActivity(subjectKey);
-      } else {
-        startActivity(subjectKey); // default opens lessons view
-      }
-    }
-
-    function startActivity(subjectKey){
-      const activity = document.getElementById('activitySelect').value;
-      hideAllSubjectAreas();
-      if(activity === 'lessons'){
-        document.getElementById('lessonArea').hidden = false;
-      } else if(activity === 'quiz'){
-        document.getElementById('quizArea').hidden = false;
-        startQuiz(subjectKey);
-      } else if(activity === 'flashcards'){
-        document.getElementById('flashArea').hidden = false;
-        renderFlashcards(subjectKey);
-      } else if(activity === 'practice'){
-        document.getElementById('mathArea').hidden = false;
-        // preconfigure if subject is maths
-        if(subjectKey === 'maths') {
-          document.getElementById('mathArea').hidden = false;
-          newMathProblem();
-        } else {
-          // other subjects can use quiz mode as "practice"
-          document.getElementById('quizArea').hidden =
+renderNav();
+renderSubject("english");
+saveState();
+</script>
+</body>
+</html>
