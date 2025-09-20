@@ -1,276 +1,79 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bear Learn — Offline Maths Practice</title>
-  <style>
-    :root{--bg:#f6fbff;--panel:#ffffff;--accent:#ffb020;--accent-2:#60a5fa;--muted:#6b7280;--good:#16a34a;--bad:#ef4444}
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;background:linear-gradient(180deg,#e6f0ff 0%,#f7fbff 100%);color:#0f1724}
-    .app{max-width:1200px;margin:20px auto;padding:18px}
-    header{display:flex;align-items:center;gap:16px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#ffdf80);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(99,102,241,0.12)}
-    .logo svg{width:44px;height:44px}
-    h1{margin:0;font-size:20px}
-    .meta{color:var(--muted);font-size:13px}
-    .topbar{margin-left:auto;display:flex;gap:12px;align-items:center}
-    .chip{background:var(--panel);padding:8px 12px;border-radius:999px;box-shadow:0 6px 14px rgba(2,6,23,0.06);display:flex;align-items:center;gap:8px}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance Mode</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
 
-    .grid{display:grid;grid-template-columns:360px 1fr;gap:18px;margin-top:18px}
-    .panel{background:var(--panel);padding:14px;border-radius:12px;box-shadow:0 8px 30px rgba(15,23,42,0.06)}
-    .topics{max-height:68vh;overflow:auto;padding-right:6px}
-    .topic{padding:10px;border-radius:8px;margin-bottom:8px;cursor:pointer;border:1px solid rgba(15,23,42,0.03)}
-    .topic.active{background:linear-gradient(90deg,#fff7ed,#fffbf0);border-color:rgba(255,176,32,0.12)}
-    .meta.small{font-size:12px;color:var(--muted)}
+        .container {
+            padding: 50px;
+            border-radius: 15px;
+            background-color: #1e1e1e;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
 
-    .question-area{min-height:60vh;display:flex;flex-direction:column}
-    .question-box{padding:12px;border-radius:10px;margin-bottom:10px;border:1px dashed rgba(15,23,42,0.04);background:linear-gradient(180deg,#ffffff,#fcfdff)}
-    .qtext{font-size:18px;margin-bottom:8px}
-    .answers{display:flex;flex-direction:column;gap:8px}
-    .answer input[type="text"]{padding:10px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);font-size:15px}
+        h1 {
+            font-size: 48px;
+            color: #ffcc00;
+            margin-bottom: 20px;
+        }
 
-    .controls{display:flex;gap:8px}
-    .btn{background:var(--accent);border:none;padding:10px 14px;border-radius:12px;color:#082032;font-weight:700;cursor:pointer}
-    .btn.ghost{background:transparent;border:1px solid rgba(15,23,42,0.06)}
+        p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
 
-    .footer{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
-    .small{font-size:13px;color:var(--muted)}
+        .loader {
+            border: 6px solid #333;
+            border-top: 6px solid #ffcc00;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
 
-    .xpbar{height:12px;background:linear-gradient(90deg,#eef2ff,#f0fff4);border-radius:999px;overflow:hidden}
-    .xpfill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#ffdf80);transition:width 800ms cubic-bezier(.2,.9,.2,1)}
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-    .badge{background:rgba(15,23,42,0.04);padding:6px 10px;border-radius:999px;font-size:13px}
+        footer {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #888;
+        }
 
-    /* animations */
-    .pop{transform-origin:center center;animation:pop .45s both}
-    @keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 36px;
+            }
 
-    .confetti-piece{position:fixed;pointer-events:none;z-index:9999}
-
-    /* small responsive */
-    @media(max-width:900px){.grid{grid-template-columns:1fr}.topbar{display:none}}
-  </style>
+            p {
+                font-size: 16px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div class="brand">
-        <div class="logo" aria-hidden>
-          <!-- simple bear face svg -->
-          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img">
-            <g fill="none" fill-rule="evenodd">
-              <circle cx="32" cy="32" r="30" fill="#fff" opacity="0.06"/>
-              <path d="M20 22a6 6 0 1 0-6-6 6 6 0 0 0 6 6zM52 22a6 6 0 1 0-6-6 6 6 0 0 0 6 6z" fill="#0f1724" opacity="0.12"/>
-              <circle cx="22" cy="16" r="4" fill="#ffffff"/>
-              <circle cx="42" cy="16" r="4" fill="#ffffff"/>
-              <circle cx="32" cy="36" r="14" fill="#ffffff"/>
-              <path d="M26 34c0 3 3 5 6 5s6-2 6-5" stroke="#0f1724" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            </g>
-          </svg>
-        </div>
-        <div>
-          <h1>Bear Learn</h1>
-          <div class="meta">Fun, offline maths practice — data stays on your device</div>
-        </div>
-      </div>
-
-      <div class="topbar">
-        <div class="chip" id="streakChip">🔥 Streak 0</div>
-        <div style="width:160px">
-          <div class="small">Level <span id="level">1</span></div>
-          <div class="xpbar" title="XP progress"><div id="xpfill" class="xpfill"></div></div>
-        </div>
-        <div class="chip">XP <strong id="xpCount">0</strong></div>
-        <div class="chip" id="userChip">—</div>
-      </div>
-    </header>
-
-    <div class="grid">
-      <aside class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <strong>Topics</strong>
-          <div class="badge" id="selectionInfo">0 selected</div>
-        </div>
-        <input id="topicSearch" class="search" placeholder="Search topics..." style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(15,23,42,0.04);margin-bottom:8px">
-        <div class="topics" id="topics"></div>
-        <div style="margin-top:8px;display:flex;gap:8px">
-          <button class="btn ghost" id="selectAll">Select All</button>
-          <button class="btn ghost" id="clearSelection">Clear</button>
-        </div>
-      </aside>
-
-      <main class="panel question-area">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <div>
-            <div class="small">Current topic</div>
-            <div id="currentTopicName" style="font-weight:700">Pick a topic on the left</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:12px">
-            <div class="small">Timer <span id="timer">00:00</span></div>
-            <div class="badge small">Score <span id="score">0/0</span></div>
-          </div>
-        </div>
-
-        <div id="questionsContainer">Select a topic to see questions.</div>
-
-        <div class="footer">
-          <div class="small">Tip: answers are stored locally. Clear browser storage to reset progress.</div>
-          <div style="display:flex;gap:8px">
-            <button class="btn ghost" id="prevTopic">Prev</button>
-            <button class="btn" id="submitAnswers">Submit</button>
-            <button class="btn ghost" id="nextTopic">Next</button>
-          </div>
-        </div>
-      </main>
+    <div class="container">
+        <h1>We are making things better!</h1>
+        <p>Our website will be back soon. Thank you for your patience.</p>
+        <div class="loader"></div>
+        <footer>&copy; 2025 Your Company Name. All rights reserved.</footer>
     </div>
-
-    <footer style="margin-top:18px;color:var(--muted);font-size:13px;text-align:center">Runs fully on the client — perfect for GitHub Pages. Your data never leaves your browser.</footer>
-  </div>
-
-  <!-- Login modal -->
-  <div id="loginModal" style="position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:20">
-    <div style="width:420px;background:#fff;padding:18px;border-radius:12px;box-shadow:0 14px 40px rgba(2,6,23,0.2)">
-      <h2 style="margin-top:0">Welcome to Bear Learn</h2>
-      <p style="color:var(--muted)">Create an account or log in. Your credentials and progress are stored locally on your device.</p>
-      <label class="small">Username</label>
-      <input id="username" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);margin-bottom:8px">
-      <label class="small">Password</label>
-      <input id="password" type="password" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);margin-bottom:12px">
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn ghost" onclick="openDemo()">Try demo</button>
-        <button class="btn ghost" onclick="closeLogin(true)">Cancel</button>
-        <button class="btn" onclick="loginOrCreate()">Log in / Create</button>
-      </div>
-      <p class="small" style="margin-top:12px;color:var(--muted)">Note: passwords are hashed locally (SHA-256) before saving. There is no server — all data stays in your browser.</p>
-    </div>
-  </div>
-
-  <script>
-    // --- Config ---
-    const NUM_TOPICS = 100; const Q_PER_TOPIC = 10;
-    const CATEGORIES = ['Addition','Subtraction','Multiplication','Division','Fractions','Decimals','Percentages','Algebra','Linear Equations','Squares & Powers','Roots','Indices','Ratio','Proportion','Geometry','Angles','Area & Perimeter','Volume','Sequences','Probability','Statistics','Coordinate Geometry','Inequalities','Exponents','Surds'];
-
-    // --- Utilities ---
-    function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-    function simplifyFraction(n,d){function gcd(a,b){return b?gcd(b,a%b):a}const g=gcd(n,d);return `${n/g}/${d/g}`}
-
-    // simple confetti
-    function burstConfetti(x,y){const colors=['#FFB020','#60A5FA','#34D399','#F472B6','#F87171'];for(let i=0;i<22;i++){const el=document.createElement('div');el.className='confetti-piece';el.style.left=(x)+'px';el.style.top=(y)+'px';el.style.width='8px';el.style.height='12px';el.style.background=colors[Math.floor(Math.random()*colors.length)];el.style.transform=`translate(0,0) rotate(${Math.random()*360}deg)`;el.style.opacity='0.95';el.style.borderRadius='2px';document.body.appendChild(el);const vx=(Math.random()-0.5)*12;const vy=-Math.random()*12-6;const rot=(Math.random()-0.5)*360;let t=0;const id=setInterval(()=>{t+=16;const dt=t/16;el.style.left=(x+vx*dt)+'px';el.style.top=(y+vy*dt+0.5*9*dt*dt)+'px';el.style.transform=`rotate(${rot*dt}deg)`;el.style.opacity=1-dt/80;if(dt>80){clearInterval(id);el.remove()}},16)}
-
-    // --- Question generation (reduced templates for brevity) ---
-    function generateQuestion(topicIndex){const difficulty=1+Math.floor(topicIndex/10);const cat=CATEGORIES[topicIndex % CATEGORIES.length];switch(cat){case'Addition':{const a=randInt(1,10*difficulty);const b=randInt(1,10*difficulty);return {q:`${a} + ${b} = ?`, a:(a+b).toString()}}case'Subtraction':{const a=randInt(5,15*difficulty);const b=randInt(1,10*difficulty);return {q:`${a} - ${b} = ?`, a:(a-b).toString()}}case'Multiplication':{const a=randInt(2,5+difficulty);const b=randInt(2,5+difficulty);return {q:`${a} × ${b} = ?`, a:(a*b).toString()}}case'Division':{const b=randInt(2,6);const a=b*randInt(2,6);return {q:`${a} ÷ ${b} = ?`, a:(a/b).toString()}}case'Fractions':{const n1=randInt(1,8);const d1=randInt(2,12);const n2=randInt(1,8);const d2=randInt(2,12);const ans=(n1/d1 + n2/d2).toFixed(3);return {q:`${n1}/${d1} + ${n2}/${d2} = ? (3 dp)`, a:ans}}case'Decimals':{const a=(randInt(10,999)/100).toFixed(2);const b=(randInt(10,999)/100).toFixed(2);const ans=(parseFloat(a)+parseFloat(b)).toFixed(2);return {q:`${a} + ${b} = ? (2 dp)`, a:ans}}default:{const a=randInt(1,20);const b=randInt(1,20);return {q:`${a} + ${b} = ?`, a:(a+b).toString()}}}
-
-    // Build topics
-    const topics = Array.from({length:NUM_TOPICS},(_,i)=>({id:i,name:`Topic ${i+1}: ${CATEGORIES[i % CATEGORIES.length]}`,questions:Array.from({length:Q_PER_TOPIC},()=>generateQuestion(i))}));
-
-    // --- State ---
-    let selectedTopicIndex = null; let selectedTopicIds = new Set(); let timerInterval = null; let startTime = null; let currentUser = null; // {name,xp,level,streak,lastLogin}
-
-    // --- UI rendering ---
-    const topicsEl = document.getElementById('topics');
-    function renderTopics(filter=''){
-      topicsEl.innerHTML='';
-      topics.forEach((t)=>{if(filter && !t.name.toLowerCase().includes(filter.toLowerCase())) return;const div=document.createElement('div');div.className='topic'+(selectedTopicIds.has(t.id)?' active':'');div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${t.name}</strong><div class='meta small'>${t.questions.length} questions</div></div><div><input type='checkbox' data-id='${t.id}' ${selectedTopicIds.has(t.id)?'checked':''}></div></div>`;div.querySelector('input').addEventListener('change',e=>{const id=Number(e.target.dataset.id);if(e.target.checked) selectedTopicIds.add(id); else selectedTopicIds.delete(id);document.getElementById('selectionInfo').innerText = `${selectedTopicIds.size} selected`;div.classList.toggle('active', selectedTopicIds.has(id));});div.addEventListener('click',e=>{if(e.target.tagName==='INPUT') return;selectTopic(t.id);});topicsEl.appendChild(div)})}
-
-    function selectTopic(id){selectedTopicIndex=id;const t=topics[id];document.getElementById('currentTopicName').innerText = t.name;renderQuestions(t);Array.from(document.querySelectorAll('.topic')).forEach((el,idx)=>{el.classList.toggle('active', topics[idx] && topics[idx].id===id)})}
-
-    function renderQuestions(topic){const container=document.getElementById('questionsContainer');container.innerHTML='';topic.questions.forEach((q, i)=>{const box=document.createElement('div');box.className='question-box pop';box.innerHTML = `<div class='qtext'><strong>Q${i+1}.</strong> ${q.q}</div><div class='answers'><div class='answer'><input type='text' data-ans-index='${i}' placeholder='Type your answer...'></div></div><div class='meta small' style='margin-top:8px'>Correct answer: <span class='correct' data-correct='${q.a}'>Hidden</span></div>`;container.appendChild(box)});document.getElementById('score').innerText = `0/${topic.questions.length}`}
-
-    // Timer
-    function startTimer(){if(timerInterval) clearInterval(timerInterval); startTime = Date.now(); timerInterval = setInterval(()=>{const diff = Math.floor((Date.now()-startTime)/1000);const mm = String(Math.floor(diff/60)).padStart(2,'0');const ss = String(diff%60).padStart(2,'0');document.getElementById('timer').innerText = `${mm}:${ss}`;},250)}
-
-    // XP / Level / Streak helpers
-    function xpForLevel(lvl){return 100 + (lvl-1)*50} // simple progression
-    function addXP(amount){if(!currentUser) return;currentUser.xp += amount;let leveled=false;while(currentUser.xp >= xpForLevel(currentUser.level)){currentUser.xp -= xpForLevel(currentUser.level);currentUser.level++;leveled=true}saveUserData(currentUser.name);updateUI();if(leveled){flashLevelUp()}}
-    function flashLevelUp(){const el=document.getElementById('level');el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),900)}
-
-    function updateUI(){if(!currentUser) return;document.getElementById('userChip').innerText = currentUser.name;document.getElementById('xpCount').innerText = currentUser.xp;document.getElementById('level').innerText = currentUser.level;document.getElementById('streakChip').innerText = `🔥 Streak ${currentUser.streak || 0}`;const pct = Math.round(100 * currentUser.xp / xpForLevel(currentUser.level));document.getElementById('xpfill').style.width = `${pct}%`}
-
-    // Show confetti and small XP animation when correct
-    function showCorrectFeedback(inputEl, correctAns){const rect = inputEl.getBoundingClientRect();burstConfetti(rect.left + rect.width/2, rect.top + rect.height/2);inputEl.style.boxShadow = `0 6px 18px rgba(16,185,129,0.12)`;setTimeout(()=>inputEl.style.boxShadow = '',800);}
-    function showWrongFeedback(inputEl){inputEl.style.boxShadow = `0 6px 18px rgba(239,68,68,0.12)`;setTimeout(()=>inputEl.style.boxShadow = '',800);}
-
-    // Submission logic with XP + save
-    document.getElementById('submitAnswers').addEventListener('click',()=>{
-      if(selectedTopicIndex===null){alert('Pick a topic first');return}
-      const topic = topics[selectedTopicIndex];
-      const inputs = Array.from(document.querySelectorAll('#questionsContainer input[type=text]'));
-      let correct = 0;
-      inputs.forEach((inp, i)=>{
-        const user = normalize(inp.value);
-        const corr = normalize(topic.questions[i].a.toString());
-        const corrEl = inp.closest('.question-box').querySelector('.correct');
-        if(user === corr && user !== ''){
-          correct++;
-          corrEl.innerText = '✓ ' + topic.questions[i].a;
-          showCorrectFeedback(inp, topic.questions[i].a);
-        } else {
-          corrEl.innerText = '✗ ' + topic.questions[i].a;
-          showWrongFeedback(inp);
-        }
-      });
-      document.getElementById('score').innerText = `${correct}/${topic.questions.length}`;
-      // Award XP: 10 per correct
-      const gained = correct * 10;
-      addXP(gained);
-      // Save answers into user's progress
-      saveProgressForTopic(selectedTopicIndex, inputs.map(i=>i.value));
-    });
-
-    function normalize(s){return String(s).trim().replace(/\s+/g,'').replace(/,/g,'.').toLowerCase()}
-
-    // Save/load per-user
-    function userKey(name){return `bearLearn:user:${name}`}
-    function saveUserData(name){localStorage.setItem(userKey(name), JSON.stringify(currentUser))}
-    function loadUserData(name){const raw = localStorage.getItem(userKey(name));if(!raw) return null;try{return JSON.parse(raw)}catch(e){return null}}
-
-    function saveProgressForTopic(topicId, answers){if(!currentUser) return;currentUser.progress = currentUser.progress || {};currentUser.progress[topicId] = {answers:answers, updated: new Date().toISOString()};saveUserData(currentUser.name)}
-
-    function loadProgressForTopic(topicId){if(!currentUser || !currentUser.progress) return;const p = currentUser.progress[topicId];if(!p) return;setTimeout(()=>{const inputs = document.querySelectorAll('#questionsContainer input[type=text]');p.answers.forEach((v,i)=>{if(inputs[i]) inputs[i].value = v})},120)}
-
-    // Login flow with SHA-256 hashing (Web Crypto API)
-    async function sha256(str){const enc = new TextEncoder();const data = enc.encode(str);const buf = await crypto.subtle.digest('SHA-256', data);const hex = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');return hex}
-
-    async function loginOrCreate(){const name = document.getElementById('username').value.trim();const pass = document.getElementById('password').value; if(!name || !pass){alert('Enter username & password');return}const key = 'bearLearn:cred:'+name;const storedHash = localStorage.getItem(key);const passHash = await sha256(pass);
-      if(storedHash){ if(storedHash === passHash){ // login
-          currentUser = loadUserData(name) || {name, xp:0, level:1, streak:0, lastLogin:null, progress:{}};handlePostLogin();
-        } else {alert('Wrong password')} }
-      else { // create
-        localStorage.setItem(key, passHash);
-        currentUser = {name, xp:0, level:1, streak:0, lastLogin:null, progress:{}};saveUserData(name);handlePostLogin();}
-    }
-
-    function handlePostLogin(){document.getElementById('loginModal').style.display='none';document.querySelector('.app').scrollIntoView();
-      // streak handling
-      const today = new Date().toISOString().slice(0,10);const last = currentUser.lastLogin; if(!last){currentUser.streak = 1} else {const lastDate = last.slice(0,10);const d1 = new Date(lastDate);const d2 = new Date(today);const diff = Math.round((d2 - d1)/(1000*60*60*24)); if(diff === 0){ /* same day - no change */ } else if(diff === 1){currentUser.streak = (currentUser.streak||0)+1} else {currentUser.streak = 1}} currentUser.lastLogin = new Date().toISOString();saveUserData(currentUser.name);updateUI();renderTopics();}
-
-    function closeLogin(cancel){if(cancel){document.getElementById('loginModal').style.display='none';} else document.getElementById('loginModal').style.display='none'}
-    function openDemo(){document.getElementById('loginModal').style.display='none';currentUser = {name:'Guest',xp:0,level:1,streak:0,lastLogin:new Date().toISOString(),progress:{}};updateUI();}
-    function logout(){location.reload()}
-
-    // Select / clear
-    document.getElementById('selectAll').addEventListener('click',()=>{topics.forEach(t=>selectedTopicIds.add(t.id));document.getElementById('selectionInfo').innerText=`${selectedTopicIds.size} selected`;renderTopics(document.getElementById('topicSearch').value)});
-    document.getElementById('clearSelection').addEventListener('click',()=>{selectedTopicIds.clear();document.getElementById('selectionInfo').innerText='0 selected';renderTopics(document.getElementById('topicSearch').value)});
-
-    // Nav
-    document.getElementById('nextTopic').addEventListener('click',()=>{if(selectedTopicIndex===null) selectTopic(0); else selectTopic((selectedTopicIndex+1)%topics.length)});
-    document.getElementById('prevTopic').addEventListener('click',()=>{if(selectedTopicIndex===null) selectTopic(0); else selectTopic((selectedTopicIndex-1+topics.length)%topics.length)});
-
-    // Shuffle (regenerate questions)
-    document.getElementById('shuffleBtn').addEventListener('click',()=>{topics.forEach((t,i)=>t.questions=Array.from({length:Q_PER_TOPIC},()=>generateQuestion(i)));if(selectedTopicIndex!==null) renderQuestions(topics[selectedTopicIndex]);alert('Questions regenerated.')});
-
-    // Save progress on input change (autosave)
-    document.addEventListener('input', (e)=>{if(e.target && e.target.matches('#questionsContainer input[type=text]')){saveTempAnswers()}});
-    function saveTempAnswers(){if(!currentUser || selectedTopicIndex===null) return;const answers = Array.from(document.querySelectorAll('#questionsContainer input[type=text]')).map(i=>i.value);currentUser.temp = currentUser.temp || {};currentUser.temp[selectedTopicIndex] = answers;saveUserData(currentUser.name)}
-
-    // load saved temp answers when a topic is selected
-    const origSelectTopic = selectTopic; // wrap
-    selectTopic = function(id){origSelectTopic(id);setTimeout(()=>{if(currentUser && currentUser.temp && currentUser.temp[id]){const inputs = document.querySelectorAll('#questionsContainer input[type=text]');currentUser.temp[id].forEach((v,i)=>{if(inputs[i]) inputs[i].value = v})}},120)}
-
-    // helper: load UI state if user exists in localStorage (for demo link, we'll open login modal by default)
-    renderTopics();document.getElementById('loginModal').style.display='flex';
-  </script>
 </body>
 </html>
